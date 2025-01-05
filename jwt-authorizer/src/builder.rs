@@ -237,7 +237,7 @@ where
             )
             .await?,
         );
-        Ok(AuthorizationLayer::new(vec![auth]))
+        Ok(AuthorizationLayer::new(vec![auth], false))
     }
 
     pub async fn build(self) -> Result<Authorizer<C>, InitError> {

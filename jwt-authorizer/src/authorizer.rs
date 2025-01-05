@@ -265,7 +265,7 @@ where
     C: Clone + DeserializeOwned + Send,
 {
     fn into_layer(self) -> AuthorizationLayer<C> {
-        AuthorizationLayer::new(self.into_iter().map(Arc::new).collect())
+        AuthorizationLayer::new(self.into_iter().map(Arc::new).collect(), false)
     }
 }
 
@@ -274,7 +274,7 @@ where
     C: Clone + DeserializeOwned + Send,
 {
     fn into_layer(self) -> AuthorizationLayer<C> {
-        AuthorizationLayer::new(self.into_iter().collect())
+        AuthorizationLayer::new(self.into_iter().collect(), false)
     }
 }
 
@@ -283,7 +283,7 @@ where
     C: Clone + DeserializeOwned + Send,
 {
     fn into_layer(self) -> AuthorizationLayer<C> {
-        AuthorizationLayer::new(self.into_iter().map(Arc::new).collect())
+        AuthorizationLayer::new(self.into_iter().map(Arc::new).collect(), false)
     }
 }
 
@@ -292,7 +292,7 @@ where
     C: Clone + DeserializeOwned + Send,
 {
     fn into_layer(self) -> AuthorizationLayer<C> {
-        AuthorizationLayer::new(self.into_iter().collect())
+        AuthorizationLayer::new(self.into_iter().collect(), false)
     }
 }
 
@@ -301,7 +301,7 @@ where
     C: Clone + DeserializeOwned + Send,
 {
     fn into_layer(self) -> AuthorizationLayer<C> {
-        AuthorizationLayer::new(vec![Arc::new(self)])
+        AuthorizationLayer::new(vec![Arc::new(self)], false)
     }
 }
 
@@ -310,7 +310,7 @@ where
     C: Clone + DeserializeOwned + Send,
 {
     fn into_layer(self) -> AuthorizationLayer<C> {
-        AuthorizationLayer::new(vec![self])
+        AuthorizationLayer::new(vec![self], false)
     }
 }
 

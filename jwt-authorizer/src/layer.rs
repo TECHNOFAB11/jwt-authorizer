@@ -42,7 +42,11 @@ where
             .collect();
 
         if tkns_auths.is_empty() {
-            return Box::pin(future::ready(Err(AuthError::MissingToken())));
+            if self.token_optional {
+                return Box::pin(future::ready(Ok(request)));
+            } else {
+                return Box::pin(future::ready(Err(AuthError::MissingToken())));
+            }
         }
 
         Box::pin(async move {
@@ -76,14 +80,15 @@ where
     C: Clone + DeserializeOwned + Send,
 {
     auths: Vec<Arc<Authorizer<C>>>,
+    token_optional: bool,
 }
 
 impl<C> AuthorizationLayer<C>
 where
     C: Clone + DeserializeOwned + Send,
 {
-    pub fn new(auths: Vec<Arc<Authorizer<C>>>) -> AuthorizationLayer<C> {
-        Self { auths }
+    pub fn new(auths: Vec<Arc<Authorizer<C>>>, token_optional: bool) -> AuthorizationLayer<C> {
+        Self { auths, token_optional }
     }
 }
 
@@ -94,7 +99,7 @@ where
     type Service = AuthorizationService<S, C>;
 
     fn layer(&self, inner: S) -> Self::Service {
-        AuthorizationService::new(inner, self.auths.clone())
+        AuthorizationService::new(inner, self.auths.clone(), self.token_optional)
     }
 }
 
@@ -122,6 +127,7 @@ where
 {
     pub inner: S,
     pub auths: Vec<Arc<Authorizer<C>>>,
+    pub token_optional: bool,
 }
 
 impl<S, C> AuthorizationService<S, C>
@@ -150,8 +156,8 @@ where
     /// Authorize requests using a custom scheme.
     ///
     /// The `Authorization` header is required to have the value provided.
-    pub fn new(inner: S, auths: Vec<Arc<Authorizer<C>>>) -> AuthorizationService<S, C> {
-        Self { inner, auths }
+    pub fn new(inner: S, auths: Vec<Arc<Authorizer<C>>>, token_optional: bool) -> AuthorizationService<S, C> {
+        Self { inner, auths, token_optional }
     }
 }
 
